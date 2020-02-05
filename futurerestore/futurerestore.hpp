@@ -9,6 +9,13 @@
 #ifndef futurerestore_hpp
 #define futurerestore_hpp
 
+//make sure WIN32 is defined if compiling for windows
+#if defined _WIN32 || defined __CYGWIN__
+#ifndef WIN32
+#define WIN32
+#endif
+#endif
+
 #include <stdio.h>
 #include <functional>
 #include <vector>
@@ -63,7 +70,6 @@ class futurerestore {
     //methods
     void enterPwnRecovery(plist_t build_identity, std::string bootargs = "");
     
-    
 public:
     futurerestore(bool isUpdateInstall = false, bool isPwnDfu = false);
     bool init();
@@ -71,6 +77,7 @@ public:
     uint64_t getDeviceEcid();
     void putDeviceIntoRecovery();
     void setAutoboot(bool val);
+    void exitRecovery();
     void waitForNonce();
     void waitForNonce(vector<const char *>nonces, size_t nonceSize);
     void loadAPTickets(const vector<const char *> &apticketPaths);
@@ -93,13 +100,11 @@ public:
     void setBasebandPath(const char *basebandPath);
     bool isUpdateInstall(){return _isUpdateInstall;};
     
-    
     plist_t sepManifest(){return _sepbuildmanifest;};
     plist_t basebandManifest(){return _basebandbuildmanifest;};
     const char *sepManifestPath(){return _sepbuildmanifestPath;};
     const char *basebandManifestPath(){return _basebandbuildmanifestPath;};
     bool is32bit(){return !is_image4_supported(_client);};
-    
     
     uint64_t getBasebandGoldCertIDFromDevice();
     
@@ -116,8 +121,5 @@ public:
     static char *getPathOfElementInManifest(const char *element, const char *manifeststr, const char *model, int isUpdateInstall);
     static std::string getGeneratorFromSHSH2(const plist_t shsh2);
 };
-
-
-
 
 #endif /* futurerestore_hpp */
